@@ -15,6 +15,7 @@
 
 - hosts: dev1jboss.awx.devstack
   vars:
+    check_version: "1.1.*"
   remote_user: cloud-user
   become: yes
   become_user: root
@@ -28,25 +29,16 @@
       group: jboss
       mode: 0644
 
-
-
-
-
-- hosts: localhost
-  vars:
-    check_string: Integrated
-  tasks:
-  - name: pause to complete deployment
-    pause: 
-      seconds: 10
-
-
   - name: Check Deployment
     uri:
-      url: http://128.31.26.134:8080/GhoulWebApp/
+      url: http://localhost:8080/GhoulWebApp/
       return_content: yes
     register: webpage
 
-  - name: Fail if  check_string is not in the page content
+  - debug:
+      msg: "{{ webpage.json }}"
+
+  - name: Fail if  check_version is not in the page content
     fail:
-    when: "'{{ check_string }}' not in webpage.content"
+    when: webpage.json.Version is not match(check_version)
+
