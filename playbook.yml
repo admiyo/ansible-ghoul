@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  vars:
+  tasks:
+  - name: Checkout code from github
+    git:
+      repo: https://github.com/admiyo/GhoulWebApp.git
+      dest: /tmp/GhoulWebApp
+
+  - name: build the war file
+    shell: scl enable rh-maven35  "mvn package"
+    args:
+      chdir:  /tmp/GhoulWebApp
+      creates: /tmp/GhoulWebApp/target/GhoulWebApp.war
