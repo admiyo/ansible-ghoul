@@ -11,4 +11,42 @@
     shell: scl enable rh-maven35  "mvn package"
     args:
       chdir:  /tmp/GhoulWebApp
-      creates: /tmp/GhoulWebApp/target/GhoulWebApp.war
+
+
+- hosts: dev1jboss.awx.devstack
+  vars:
+  remote_user: cloud-user
+  become: yes
+  become_user: root
+  tasks:
+
+  - name: deploy the war file
+    copy:
+      src: /tmp/GhoulWebApp/target/GhoulWebApp.war
+      dest: /var/opt/rh/eap7/lib/wildfly/standalone/deployments/
+      owner: root
+      group: jboss
+      mode: 0644
+
+
+
+
+
+- hosts: localhost
+  vars:
+    check_string: Integrated
+  tasks:
+  - name: pause to complete deployment
+    pause: 
+      seconds: 10
+
+
+  - name: Check Deployment
+    uri:
+      url: http://128.31.26.134:8080/GhoulWebApp/
+      return_content: yes
+    register: webpage
+
+  - name: Fail if  check_string is not in the page content
+    fail:
+    when: "'{{ check_string }}' not in webpage.content"
