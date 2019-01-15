@@ -10,11 +10,13 @@
   - name: Enable a RHSM repository
     rhsm_repository:
       name: rhel-server-rhscl-7-rpms
+    become: True
 
   - name: install the Maven Software collection
     yum:
       name: rh-maven35
       state: latest
+    become: True
 
   - name: build the war file
     shell: scl enable rh-maven35  "mvn package"
