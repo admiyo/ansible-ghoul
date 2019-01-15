@@ -7,6 +7,15 @@
       repo: https://github.com/admiyo/GhoulWebApp.git
       dest: /tmp/GhoulWebApp
 
+  - name: Enable a RHSM repository
+    rhsm_repository:
+      name: rhel-server-rhscl-7-rpms
+
+  - name: install the Maven Software collection
+    yum:
+      name: rh-maven35
+      state: latest
+
   - name: build the war file
     shell: scl enable rh-maven35  "mvn package"
     args:
